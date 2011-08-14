@@ -1,8 +1,10 @@
 package net.benrowland.kdtree;
 
 import net.benrowland.tree.Node;
+import net.benrowland.tree.Tree;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,6 +51,23 @@ public class TestKDTreeDouble {
 
         Point<Double> nearest = tree.nearestNeighbour(testPoint);
         assertEquals(new PointDouble(3d, 4d), nearest);
+    }
+
+    /**
+     * Test situation where closest point is actually the root node.
+     */
+    @Test
+    public void testNearestNeighbourNonLeaf() {
+        List<PointDouble> points = new ArrayList<PointDouble>();
+        points.add(new PointDouble(43d, 71d));
+        points.add(new PointDouble(10d, 91d));
+        points.add(new PointDouble(1078d, 8876d));
+        KDTreeDouble tree = KDTreeDouble.kdtree(points);
+
+        PointDouble testPoint = new PointDouble(45d, 78d);
+        Point<Double> nearest = tree.nearestNeighbour(testPoint);
+        assertEquals(new PointDouble(43d, 71d), nearest);
+
     }
 
     private List<PointDouble> getPoints() {
