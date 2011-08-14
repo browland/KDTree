@@ -1,5 +1,7 @@
 package net.benrowland.tree;
 
+import net.benrowland.kdtree.Point;
+
 /**
  * Represents a Node in a Tree.
  *
@@ -7,11 +9,11 @@ package net.benrowland.tree;
 */
 public abstract class Node<T> {
 
-    protected T elem;
+    protected Point<T> elem;
     protected Node<T> leftChild;
     protected Node<T> rightChild;
 
-    public Node(T elem) {
+    public Node(Point<T> elem) {
         this.elem = elem;
     }
 
@@ -22,7 +24,7 @@ public abstract class Node<T> {
      * @return -1 if this node is "less than" the other node,
      *         +1 if this node is "more than" the other node.
      */
-    public abstract int compare(T other);
+    public abstract int compare(Point<T> other);
 
     /**
      * Insert newNode into this node.
@@ -52,7 +54,7 @@ public abstract class Node<T> {
         }
     }
 
-    public T getElem() {
+    public Point<T> getElem() {
         return elem;
     }
 

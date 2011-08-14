@@ -7,7 +7,7 @@ import java.lang.Override;
  * A Node of Point, in a KD Tree.
  *
 */
-public class KDTreeNode extends Node<Point> {
+public class KDTreeNode extends Node<Integer> {
     /**
      * The Axis in which this node partitions remaining space.
      */
@@ -17,7 +17,7 @@ public class KDTreeNode extends Node<Point> {
         X, Y
     }
 
-    public KDTreeNode(Point point) {
+    public KDTreeNode(Point<Integer> point) {
         super(point);
     }
 
@@ -27,7 +27,7 @@ public class KDTreeNode extends Node<Point> {
      * @param other
      * @return -1 if other is &lt; this node, +1 if other is &gt;= this node
      */
-    public int compare(Point other) {
+    public int compare(Point<Integer> other) {
         if (axis == Axis.X) {
             if(other.getX() < elem.getX()) {
                 return -1;
@@ -52,7 +52,7 @@ public class KDTreeNode extends Node<Point> {
      * @param point
      * @return
      */
-    public Point nearestNeighbour(Point point) {
+    public Point<Integer> nearestNeighbour(Point<Integer> point) {
         if(leftChild == null && rightChild == null) {
             return this.getElem();
         }
@@ -72,7 +72,7 @@ public class KDTreeNode extends Node<Point> {
      * @param newNode
      */
     @Override
-    public void insert(Node<Point> newNode) {
+    public void insert(Node<Integer> newNode) {
         KDTreeNode kdTreeNewNode = (KDTreeNode) newNode;
         kdTreeNewNode.axis = (axis == KDTreeNode.Axis.X) ? KDTreeNode.Axis.Y : KDTreeNode.Axis.X;
         super.insert(newNode);

@@ -3,28 +3,28 @@ package net.benrowland.kdtree;
 /**
  * A Point in 2-dimensional space.
  */
-public class Point {
-    private int x;
-    private int y;
+public class Point<T> {
+    private T x;
+    private T y;
 
-    public Point(int x, int y) {
+    public Point(T x, T y) {
         this.x = x;
         this.y = y;
     }
 
-    public int getX() {
+    public T getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(T x) {
         this.x = x;
     }
 
-    public int getY() {
+    public T getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(T y) {
         this.y = y;
     }
 }

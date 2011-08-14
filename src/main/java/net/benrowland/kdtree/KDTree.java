@@ -28,7 +28,7 @@ import net.benrowland.tree.Tree;
 public class KDTree {
 
     // Prefer composition over inheritance ...
-    private Tree<Point> tree;
+    private Tree<Integer> tree;
 
     /**
      * Inserts a 2 dimensional Point into the KD Tree.  Does not re-balance the tree,
@@ -36,12 +36,12 @@ public class KDTree {
      *
      * @param point
      */
-    public void insert(Point point) {
+    public void insert(Point<Integer> point) {
         KDTreeNode node = new KDTreeNode(point);
         if(tree == null) {
             // Root node partitions in X dimension (arbitrary choice)
             node.axis = KDTreeNode.Axis.X;
-            tree = new Tree<Point>();
+            tree = new Tree<Integer>();
         }
         tree.insert(node);
     }
@@ -53,8 +53,8 @@ public class KDTree {
      * @return nearest neighbouring Point in the KD Tree.
      */
     // todo back-track to find better matches
-    public Point nearestNeighbour(Point point) {
-        Point currentBest = ((KDTreeNode)tree.getRootNode()).nearestNeighbour(point);
+    public Point nearestNeighbour(Point<Integer> point) {
+        Point<Integer> currentBest = ((KDTreeNode)tree.getRootNode()).nearestNeighbour(point);
         return currentBest;
     }
 
