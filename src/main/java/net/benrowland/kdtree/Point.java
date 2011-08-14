@@ -4,6 +4,7 @@ package net.benrowland.kdtree;
  * A Point in 2-dimensional space.
  */
 public class Point<T> {
+
     private T x;
     private T y;
 
@@ -26,5 +27,9 @@ public class Point<T> {
 
     public void setY(T y) {
         this.y = y;
+    }
+
+    public String toString() {
+        return getClass().getSimpleName() + " [x: " + x + ", y: " + y + "]";
     }
 }

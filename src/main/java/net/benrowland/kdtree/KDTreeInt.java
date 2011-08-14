@@ -3,6 +3,8 @@ package net.benrowland.kdtree;
 import net.benrowland.tree.Node;
 import net.benrowland.tree.Tree;
 
+import java.util.List;
+
 /**
  * A KD-Tree is a Binary Tree representing points in k dimensions (this implementation is limited to
  * 2 dimensions).  It provides means for an efficient nearest neighbour search, where k is low.
@@ -22,27 +24,30 @@ import net.benrowland.tree.Tree;
  *
  * ... and so on.
  *
- * todo Re-balancing (currently relies on Nodes being added in a convenient order)
- *
  */
 public class KDTreeInt {
 
     // Prefer composition over inheritance ...
     private Tree<Integer> tree;
 
-    /**
-     * Inserts a 2 dimensional Point into the KD Tree.  Does not re-balance the tree,
-     * so add points mindfully.
-     *
-     * @param point
-     */
-    public void insert(Point<Integer> point) {
-        KDTreeNodeInt node = new KDTreeNodeInt(point);
-        if(tree == null) {
-            // Root node partitions in X dimension (arbitrary choice)
-            node.axis = KDTreeNode.Axis.X;
-            tree = new Tree<Integer>();
-        }
+    // *** Constructors
+
+    public KDTreeInt() {
+        tree = new Tree<Integer>();
+    }
+
+    // *** Static factory methods
+
+    public static KDTreeInt kdtree(List<PointInt> points) {
+        KDTreeInt tree = new KDTreeInt();
+        tree.insert(KDTreeNodeInt.buildRoot(points));
+
+        return tree;
+    }
+
+    // *** Member functions
+
+    public void insert(KDTreeNode<Integer> node) {
         tree.insert(node);
     }
 
@@ -60,5 +65,9 @@ public class KDTreeInt {
 
     public Node getRootNode() {
         return tree.getRootNode();
+    }
+
+    public String toString() {
+        return tree.getRootNode().toString();
     }
 }

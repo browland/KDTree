@@ -13,6 +13,10 @@ public abstract class Node<T> {
     protected Node<T> leftChild;
     protected Node<T> rightChild;
 
+    public Node() {
+
+    }
+
     public Node(Point<T> elem) {
         this.elem = elem;
     }
@@ -64,5 +68,16 @@ public abstract class Node<T> {
 
     public Node<T> getRightChild() {
         return rightChild;
+    }
+
+    public String toString(int depth) {
+        StringBuilder sb = new StringBuilder();
+        for(Integer i=0;i<=depth; i++) sb.append("\t");
+        sb.append(elem.toString());
+        sb.append("\n");
+
+        if(leftChild != null) sb.append(leftChild.toString(depth+1));
+        if(rightChild != null) sb.append(rightChild.toString(depth+1));
+        return sb.toString();
     }
 }
