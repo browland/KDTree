@@ -12,9 +12,14 @@ public abstract class Node<T> {
     protected Point<T> elem;
     protected Node<T> leftChild;
     protected Node<T> rightChild;
+    protected Node<T> parent;
 
     public Node() {
 
+    }
+
+    public Node(Node parent) {
+        this.parent = parent;
     }
 
     public Node(Point<T> elem) {
@@ -68,6 +73,14 @@ public abstract class Node<T> {
 
     public Node<T> getRightChild() {
         return rightChild;
+    }
+
+    public Node<T> getParent() {
+        return parent;
+    }
+
+    public void setParent(Node<T> parent) {
+        this.parent = parent;
     }
 
     public String toString(int depth) {

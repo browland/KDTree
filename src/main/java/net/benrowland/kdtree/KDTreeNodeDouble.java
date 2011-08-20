@@ -13,6 +13,10 @@ public class KDTreeNodeDouble extends KDTreeNode<Double> {
 
     public KDTreeNodeDouble() {}
 
+    public KDTreeNodeDouble(KDTreeNodeDouble parent) {
+        super(parent);
+    }
+
     public KDTreeNodeDouble(Point<Double> elem) {
         super(elem);
     }
@@ -20,15 +24,15 @@ public class KDTreeNodeDouble extends KDTreeNode<Double> {
     // *** Static factory methods
 
     public static KDTreeNodeDouble buildRoot(List<PointDouble> points) {
-        return buildNode(points, 0);
+        return buildNode(null, points, 0);
     }
 
-    public static KDTreeNodeDouble buildNode(List<PointDouble> points, int depth) {
+    public static KDTreeNodeDouble buildNode(KDTreeNodeDouble parent, List<PointDouble> points, int depth) {
         // Base case
         if(points.isEmpty()) return null;
 
         // Create this node
-        KDTreeNodeDouble node = new KDTreeNodeDouble();
+        KDTreeNodeDouble node = new KDTreeNodeDouble(parent);
         node.axis = (depth % 2 == 1) ? KDTreeNode.Axis.Y : KDTreeNode.Axis.X;
 
         // Sort points in axis and find median
@@ -40,8 +44,8 @@ public class KDTreeNodeDouble extends KDTreeNode<Double> {
         node.elem = medianInAxis;
 
         // Build left and right children
-        node.leftChild = buildNode(points.subList(0, medianIndex), depth+1);
-        node.rightChild = buildNode(points.subList(medianIndex+1, points.size()), depth+1);
+        node.leftChild = buildNode(node, points.subList(0, medianIndex), depth+1);
+        node.rightChild = buildNode(node, points.subList(medianIndex+1, points.size()), depth+1);
 
         return node;
     }

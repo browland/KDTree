@@ -2,6 +2,7 @@ package net.benrowland.kdtree;
 
 import net.benrowland.tree.Node;
 
+import javax.rmi.CORBA.Util;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,10 @@ public abstract class KDTreeNode<T> extends Node<T> {
 
     public KDTreeNode() {
         super();
+    }
+
+    public KDTreeNode(KDTreeNode parent) {
+        super(parent);
     }
 
     public KDTreeNode(Point<T> elem) {
@@ -36,22 +41,62 @@ public abstract class KDTreeNode<T> extends Node<T> {
 
     /**
      * Find nearest neighbouring point in this KDTreeNodeInt, given 'point'.
+     * // todo back-track to find better matches
      *
      * @param point
      * @return
      */
     public Point<T> nearestNeighbour(Point<T> point) {
-        if(leftChild == null && rightChild == null) {
-            return this.getElem();
+        // First find leaf node closest to point.
+        KDTreeNode<T> currentBest = findNearestLeaf(point);
+
+        // Now back-track up the tree, and if a parent node is closer to
+        // point, save that as the new current best.
+        KDTreeNode<T> closerParent = findCloserParent(currentBest, point);
+        if(closerParent != null) {
+            currentBest = closerParent;
         }
+
+        return currentBest.getElem();
+    }
+
+    /**
+     * Finds the leaf node which is closest to point, by simple depth-first
+     * recursion.
+     *
+     * @param point
+     * @return
+     */
+    protected KDTreeNode<T> findNearestLeaf(Point<T> point) {
+        // If we've reached a leaf node
+        if(leftChild == null && rightChild == null) {
+            return this;
+        }
+        // Non-leaf node
         else {
             if(compare(point) == -1) {
-                return ((KDTreeNode<T>)leftChild).nearestNeighbour(point);
+                return ((KDTreeNode<T>)leftChild).findNearestLeaf(point);
             }
             else {
-                return ((KDTreeNode<T>)rightChild).nearestNeighbour(point);
+                return ((KDTreeNode<T>)rightChild).findNearestLeaf(point);
             }
         }
+    }
+
+    protected KDTreeNode<T> findCloserParent(KDTreeNode<T> currentNode, Point<T> point) {
+        return findCloserParent(currentNode, point, currentNode);
+    }
+
+    protected KDTreeNode<T> findCloserParent(KDTreeNode<T> currentNode, Point<T> point, KDTreeNode<T> currentBest) {
+        KDTreeNode<T> parent = (KDTreeNode<T>) currentNode.getParent();
+        if(parent == null) {
+            return currentBest;
+        }
+
+        if(parent.getElem().closer(point, currentBest.getElem())) {
+            currentBest = parent;
+        }
+        return findCloserParent(parent, point, currentBest);
     }
 
     /**
@@ -66,6 +111,11 @@ public abstract class KDTreeNode<T> extends Node<T> {
         super.insert(newNode);
     }
 
+    /**
+     * Compares 2 Points according to the value in the X axis.
+     *
+     * @param <T>
+     */
     static class XComparator<T extends Number> implements Comparator<Point<T>> {
         public int compare(Point<T> o1, Point<T> o2) {
             if(o1 == null || o2 == null) {
@@ -85,6 +135,11 @@ public abstract class KDTreeNode<T> extends Node<T> {
         }
     }
 
+/**
+     * Compares 2 Points according to the value in the Y axis.
+     *
+     * @param <T>
+     */
     static class YComparator<T extends Number> implements Comparator<Point<T>> {
         public int compare(Point<T> o1, Point<T> o2) {
             if(o1 == null || o2 == null) {

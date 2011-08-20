@@ -11,6 +11,12 @@ public class PointDouble extends Point<Double> {
         super(x, y);
     }
 
+    @Override
+    protected double distance(Point<Double> other) {
+        double distSquared = Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2);
+        return Math.sqrt(distSquared);
+    }
+
     public boolean equals(Object other) {
         Point<Double> otherPoint = (Point<Double>) other;
         return (otherPoint.getX() > getX() - EPSILON && otherPoint.getX() < getX() + EPSILON

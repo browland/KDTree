@@ -16,6 +16,10 @@ public class KDTreeNodeInt extends KDTreeNode<Integer> {
         super();
     }
 
+    public KDTreeNodeInt(KDTreeNodeInt parent) {
+        super(parent);
+    }
+
     public KDTreeNodeInt(Point<Integer> point) {
         super(point);
     }
