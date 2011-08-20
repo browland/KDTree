@@ -60,8 +60,7 @@ public class KDTreeDouble {
      * @return nearest neighbouring Point in the KD Tree.
      */
     public Point<Double> nearestNeighbour(Point<Double> point) {
-        Point<Double> currentBest = ((KDTreeNodeDouble)tree.getRootNode()).nearestNeighbour(point);
-        return currentBest;
+        return ((KDTreeNodeDouble)tree.getRootNode()).nearestNeighbour(point);
     }
 
     public Node getRootNode() {
