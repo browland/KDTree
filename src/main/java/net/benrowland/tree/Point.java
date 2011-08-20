@@ -1,4 +1,4 @@
-package net.benrowland.kdtree;
+package net.benrowland.tree;
 
 /**
  * A Point in 2-dimensional space.

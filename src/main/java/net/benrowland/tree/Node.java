@@ -1,7 +1,5 @@
 package net.benrowland.tree;
 
-import net.benrowland.kdtree.Point;
-
 /**
  * Represents a Node in a Tree.
  *

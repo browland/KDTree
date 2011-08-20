@@ -1,5 +1,8 @@
 package net.benrowland.kdtree;
 
+import net.benrowland.tree.Point;
+import net.benrowland.tree.PointDouble;
+
 import java.util.Collections;
 import java.util.List;
 

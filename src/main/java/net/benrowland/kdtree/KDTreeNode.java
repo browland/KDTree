@@ -1,8 +1,8 @@
 package net.benrowland.kdtree;
 
 import net.benrowland.tree.Node;
+import net.benrowland.tree.Point;
 
-import javax.rmi.CORBA.Util;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;

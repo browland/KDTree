@@ -1,6 +1,7 @@
 package net.benrowland.kdtree;
 
-import sun.plugin.dom.core.Element;
+import net.benrowland.tree.Point;
+import net.benrowland.tree.PointInt;
 
 import java.util.*;
 
