@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for KDTreeDouble.
@@ -78,6 +79,11 @@ public class TestKDTreeDouble {
         Point<Double> nearest = tree.nearestNeighbour(testPoint);
         assertEquals(new PointDouble(43d, 71d), nearest);
 
+    }
+
+    @Test
+    public void testNearestNeighbourIsOnOtherBranch() {
+        assertTrue("TODO", false);
     }
 
     private List<PointDouble> getPoints() {
