@@ -59,7 +59,7 @@ public class KDTreeInt {
      * @param point
      * @return nearest neighbouring Point in the KD Tree.
      */
-    public Point<Integer> nearestNeighbour(Point<Integer> point) {
+    public KDTreeNode<Integer> nearestNeighbour(Point<Integer> point) {
         return ((KDTreeNodeInt)tree.getRootNode()).nearestNeighbour(point);
     }
 

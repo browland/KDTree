@@ -30,6 +30,15 @@ public class KDTreeNodeDouble extends KDTreeNode<Double> {
         return buildNode(null, points, 0);
     }
 
+    /**
+     * Builds the current Node (and all below it).  The split axis alternates between X and Y.  The current
+     * node is defined as the median point (in remaining points) in the current axis.
+     *
+     * @param parent
+     * @param points
+     * @param depth
+     * @return
+     */
     public static KDTreeNodeDouble buildNode(KDTreeNodeDouble parent, List<PointDouble> points, int depth) {
         // Base case
         if(points.isEmpty()) return null;
@@ -54,6 +63,22 @@ public class KDTreeNodeDouble extends KDTreeNode<Double> {
     }
 
     // *** Member functions
+
+    @Override
+    protected boolean shouldTryOtherBranchForBetterMatch(Point<Double> point, KDTreeNode<Double> currentBest) {
+        return point.distance(currentBest.getElem()) > distanceInAxis(point);
+    }
+
+    public Double distanceInAxis(Point<Double> point) {
+        switch(axis) {
+            case X:
+                return Math.abs(elem.getX() - point.getX());
+            case Y:
+                return Math.abs(elem.getY() - point.getY());
+            default:
+                throw new IllegalStateException("Unknown axis [" + axis + "]");
+        }
+    }
 
     @Override
     public int compare(Point<Double> other) {

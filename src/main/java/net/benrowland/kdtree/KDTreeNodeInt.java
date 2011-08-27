@@ -28,15 +28,15 @@ public class KDTreeNodeInt extends KDTreeNode<Integer> {
     // *** Static factory methods
 
     public static KDTreeNodeInt buildRoot(List<PointInt> points) {
-        return buildNode(points, 0);
+        return buildNode(null, points, 0);
     }
 
-    public static KDTreeNodeInt buildNode(List<PointInt> points, int depth) {
+    public static KDTreeNodeInt buildNode(KDTreeNodeInt parent, List<PointInt> points, int depth) {
         // Base case
         if(points.isEmpty()) return null;
 
         // Create this node
-        KDTreeNodeInt node = new KDTreeNodeInt();
+        KDTreeNodeInt node = new KDTreeNodeInt(parent);
         node.axis = (depth % 2 == 1) ? KDTreeNode.Axis.Y : KDTreeNode.Axis.X;
 
         // Sort points in axis and find median
@@ -48,13 +48,29 @@ public class KDTreeNodeInt extends KDTreeNode<Integer> {
         node.elem = medianInAxis;
 
         // Build left and right children
-        node.leftChild = buildNode(points.subList(0, medianIndex), depth+1);
-        node.rightChild = buildNode(points.subList(medianIndex+1, points.size()), depth+1);
+        node.leftChild = buildNode(node, points.subList(0, medianIndex), depth+1);
+        node.rightChild = buildNode(node, points.subList(medianIndex+1, points.size()), depth+1);
 
         return node;
     }
 
     // *** Member functions
+
+    @Override
+    protected boolean shouldTryOtherBranchForBetterMatch(Point<Integer> point, KDTreeNode<Integer> currentBest) {
+        return point.distance(currentBest.getElem()) > distanceInAxis(point);
+    }
+
+    public Integer distanceInAxis(Point<Integer> point) {
+           switch(axis) {
+               case X:
+                   return Math.abs(elem.getX() - point.getX());
+               case Y:
+                   return Math.abs(elem.getY() - point.getY());
+               default:
+                   throw new IllegalStateException("Unknown axis [" + axis + "]");
+           }
+       }
 
     /**
      * Compare the Point in this Node to the other Point.

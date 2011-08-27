@@ -1,5 +1,6 @@
 package net.benrowland.kdtree;
 
+import com.sun.org.apache.xalan.internal.xsltc.dom.CurrentNodeListFilter;
 import net.benrowland.tree.Node;
 import net.benrowland.tree.Point;
 
@@ -24,6 +25,10 @@ public abstract class KDTreeNode<T> extends Node<T> {
         super(elem);
     }
 
+    /**
+     * Map for looking up the appropriate Comparator based on the split axis.
+     * Used to sort nodes by the axis, when constructing the tree.
+     */
     static Map<Axis, Comparator> comparatorMap = new HashMap<Axis, Comparator>();
     static {
         comparatorMap.put(Axis.X, new XComparator());
@@ -41,23 +46,20 @@ public abstract class KDTreeNode<T> extends Node<T> {
 
     /**
      * Find nearest neighbouring point in this KDTreeNodeInt, given 'point'.
-     * // todo back-track to find better matches
      *
      * @param point
      * @return
      */
-    public Point<T> nearestNeighbour(Point<T> point) {
+    public KDTreeNode<T> nearestNeighbour(Point<T> point) {
+
         // First find leaf node closest to point.
         KDTreeNode<T> currentBest = findNearestLeaf(point);
 
         // Now back-track up the tree, and if a parent node is closer to
         // point, save that as the new current best.
-        KDTreeNode<T> closerParent = findCloserParent(currentBest, point);
-        if(closerParent != null) {
-            currentBest = closerParent;
-        }
+        currentBest = currentBest.unwindForBetterMatch(point, this);
 
-        return currentBest.getElem();
+        return currentBest;
     }
 
     /**
@@ -83,21 +85,74 @@ public abstract class KDTreeNode<T> extends Node<T> {
         }
     }
 
-    protected KDTreeNode<T> findCloserParent(KDTreeNode<T> currentNode, Point<T> point) {
-        return findCloserParent(currentNode, point, currentNode);
+    /**
+     * Instructs the current node (always a nearest leaf) to back-track up the tree, looking
+     * for a parent node which is closer to point, or trying the other branch if necessary.
+     *
+     * Passes the current node as the current best.
+     *
+     * @param point
+     * @param callingNode
+     * @return
+     */
+    protected KDTreeNode<T> unwindForBetterMatch(Point<T> point, KDTreeNode<T> callingNode) {
+        return unwindForBetterMatch(point, callingNode, this);
     }
 
-    protected KDTreeNode<T> findCloserParent(KDTreeNode<T> currentNode, Point<T> point, KDTreeNode<T> currentBest) {
-        KDTreeNode<T> parent = (KDTreeNode<T>) currentNode.getParent();
-        if(parent == null) {
+    /**
+     * Instructs the current node (always a nearest leaf) to back-track up the tree, looking
+     * for a parent node which is closer to point, or trying the other branch if necessary.
+     *
+     * @param point
+     * @param callingNode
+     * @param currentBest
+     * @return
+     */
+    protected KDTreeNode<T> unwindForBetterMatch(Point<T> point, KDTreeNode<T> callingNode, KDTreeNode<T> currentBest) {
+        KDTreeNode<T> parentKdTreeNode = (KDTreeNode<T>) getParent();
+
+        // If we have back-tracked as far as the node which initiated the back-tracking, then terminate the back-tracking.
+        // This is necessary (a) to prevent back-tracking beyond the root node, and (b) to prevent inner back-tracking from
+        // back-tracking further than the outer back-tracking (this happens because we repeat the whole nearest neighbour
+        // search within the existing one, when trying the other branch).
+        if(this == callingNode) {
             return currentBest;
         }
 
-        if(parent.getElem().closer(point, currentBest.getElem())) {
-            currentBest = parent;
+        // Check whether the parent node is closer to point than the currentBest
+        if(parentKdTreeNode.getElem().closer(point, currentBest.getElem())) {
+            currentBest = parentKdTreeNode;
         }
-        return findCloserParent(parent, point, currentBest);
+
+        // Check whether there could be closer points on the other branch, and if so, traverse down that branch, looking
+        // for a closer match.  There could be closer points on the other branch if the distance in the split plane for
+        // 'parent' from search point to parent is less than the distance between the search point and the current best.
+        if(parentKdTreeNode.shouldTryOtherBranchForBetterMatch(point, currentBest)) {
+            KDTreeNode<T> otherChild = (KDTreeNode<T>) parentKdTreeNode.getOtherChild(this);
+            if(otherChild != null) {
+                KDTreeNode<T> betterCandidate = otherChild.nearestNeighbour(point);
+                if(betterCandidate.getElem().closer(point, currentBest.getElem())) {
+                    currentBest = betterCandidate;
+                }
+            }
+        }
+
+        // Continue to unwind, by recursing
+        return parentKdTreeNode.unwindForBetterMatch(point, callingNode, currentBest);
     }
+
+    /**
+     * Determines whether the other branch could possibly contain a better match for point.  This is true if
+     * the distance between point and currentBest is greater than the distance between point and the split plane
+     * of the current point.
+     *
+     * Declared abstract so subclasses can use comparison operations with the actual type.
+     *
+     * @param point
+     * @param currentBest
+     * @return
+     */
+    protected abstract boolean shouldTryOtherBranchForBetterMatch(Point<T> point, KDTreeNode<T> currentBest);
 
     /**
      * Insert a new Node of Point into this KDTreeNodeInt.
@@ -110,6 +165,16 @@ public abstract class KDTreeNode<T> extends Node<T> {
         kdTreeNewNode.axis = (axis == KDTreeNodeInt.Axis.X) ? KDTreeNodeInt.Axis.Y : KDTreeNodeInt.Axis.X;
         super.insert(newNode);
     }
+
+    /**
+     * The distance between this node, and the Point 'other', purely in the axis that this node splits upon.
+     *
+     * Declared abstract so subclasses can perform comparison operations on the actual type.
+     *
+     * @param other
+     * @return
+     */
+    public abstract T distanceInAxis(Point<T> other);
 
     /**
      * Compares 2 Points according to the value in the X axis.

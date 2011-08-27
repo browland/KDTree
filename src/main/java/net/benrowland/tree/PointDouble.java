@@ -1,5 +1,7 @@
 package net.benrowland.tree;
 
+import net.benrowland.kdtree.KDTreeNode;
+
 /**
  */
 public class PointDouble extends Point<Double> {
@@ -12,10 +14,12 @@ public class PointDouble extends Point<Double> {
     }
 
     @Override
-    protected double distance(Point<Double> other) {
+    public double distance(Point<Double> other) {
         double distSquared = Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2);
         return Math.sqrt(distSquared);
     }
+
+
 
     public boolean equals(Object other) {
         Point<Double> otherPoint = (Point<Double>) other;

@@ -60,7 +60,7 @@ public class TestKDTreeDouble {
 
         PointDouble testPoint = new PointDouble(3d, 3d);
 
-        Point<Double> nearest = tree.nearestNeighbour(testPoint);
+        Point<Double> nearest = tree.nearestNeighbour(testPoint).getElem();
         assertEquals(new PointDouble(3d, 4d), nearest);
     }
 
@@ -76,7 +76,7 @@ public class TestKDTreeDouble {
         KDTreeDouble tree = KDTreeDouble.kdtree(points);
 
         PointDouble testPoint = new PointDouble(45d, 78d);
-        Point<Double> nearest = tree.nearestNeighbour(testPoint);
+        Point<Double> nearest = tree.nearestNeighbour(testPoint).getElem();
         assertEquals(new PointDouble(43d, 71d), nearest);
 
     }
@@ -92,7 +92,7 @@ public class TestKDTreeDouble {
         PointDouble testPoint = new PointDouble(4d, 8d);
 
         KDTreeDouble tree = KDTreeDouble.kdtree(points);
-        Point<Double> nearest = tree.nearestNeighbour(testPoint);
+        Point<Double> nearest = tree.nearestNeighbour(testPoint).getElem();
         assertEquals(new PointDouble(6d, 8d), nearest);
     }
 

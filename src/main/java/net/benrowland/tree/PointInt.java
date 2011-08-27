@@ -9,7 +9,7 @@ public class PointInt extends Point<Integer> {
     }
 
     @Override
-    protected double distance(Point<Integer> other) {
+    public double distance(Point<Integer> other) {
         double distSquared = Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2);
         return Math.sqrt(distSquared);
     }

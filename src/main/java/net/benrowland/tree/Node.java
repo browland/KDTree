@@ -81,6 +81,19 @@ public abstract class Node<T> {
         this.parent = parent;
     }
 
+    /**
+     * Where child is a child of this Node, returns the other child
+     * Node.
+     *
+     * @param child
+     * @return
+     */
+    public Node<T> getOtherChild(Node<T> child) {
+        if(child.equals(leftChild)) return rightChild;
+        else if(child.equals(rightChild)) return leftChild;
+        else throw new IllegalStateException("Child passed in does not match either of my children!");
+    }
+
     public String toString(int depth) {
         StringBuilder sb = new StringBuilder();
         for(Integer i=0;i<=depth; i++) sb.append("\t");
@@ -90,5 +103,29 @@ public abstract class Node<T> {
         if(leftChild != null) sb.append(leftChild.toString(depth+1));
         if(rightChild != null) sb.append(rightChild.toString(depth+1));
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Node node = (Node) o;
+
+        if (elem != null ? !elem.equals(node.elem) : node.elem != null) return false;
+        if (leftChild != null ? !leftChild.equals(node.leftChild) : node.leftChild != null) return false;
+        if (parent != null ? !parent.equals(node.parent) : node.parent != null) return false;
+        if (rightChild != null ? !rightChild.equals(node.rightChild) : node.rightChild != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = elem != null ? elem.hashCode() : 0;
+        result = 31 * result + (leftChild != null ? leftChild.hashCode() : 0);
+        result = 31 * result + (rightChild != null ? rightChild.hashCode() : 0);
+        result = 31 * result + (parent != null ? parent.hashCode() : 0);
+        return result;
     }
 }
