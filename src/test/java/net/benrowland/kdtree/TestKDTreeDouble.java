@@ -25,7 +25,7 @@ public class TestKDTreeDouble {
         System.out.println(tree);
 
         Node root = tree.getRootNode();
-        assertEquals(new PointDouble(5d, 6d), root.getElem());
+        assertEquals(new PointDouble(5d, 5d), root.getElem());
 
         Node lChild = root.getLeftChild();
         Node rChild = root.getRightChild();
@@ -83,7 +83,17 @@ public class TestKDTreeDouble {
 
     @Test
     public void testNearestNeighbourIsOnOtherBranch() {
-        assertTrue("TODO", false);
+        List<PointDouble> points = new ArrayList<PointDouble>(getPoints());
+
+        // Add point on other side of median in x (first split axis),
+        // compared to search point.
+        points.add(new PointDouble(6d, 8d));
+
+        PointDouble testPoint = new PointDouble(4d, 8d);
+
+        KDTreeDouble tree = KDTreeDouble.kdtree(points);
+        Point<Double> nearest = tree.nearestNeighbour(testPoint);
+        assertEquals(new PointDouble(6d, 8d), nearest);
     }
 
     private List<PointDouble> getPoints() {
@@ -95,7 +105,7 @@ public class TestKDTreeDouble {
                         new PointDouble(1d, 1d),
                         new PointDouble(1d, 2d),
                         new PointDouble(3d, 4d),
-                        new PointDouble(5d, 6d),
+                        new PointDouble(5d, 5d),
                         new PointDouble(7d, 8d)
                 }
         );
