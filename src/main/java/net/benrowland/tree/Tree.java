@@ -3,7 +3,7 @@ package net.benrowland.tree;
 /**
  * A Tree of elements of type T.
  */
-public class Tree<T> {
+public class Tree<T extends Number> {
 
     protected Node<T> root;
 

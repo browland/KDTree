@@ -5,7 +5,7 @@ package net.benrowland.tree;
  *
  * @see Tree
 */
-public abstract class Node<T> {
+public abstract class Node<T extends Number> {
 
     protected Point<T> elem;
     protected Node<T> leftChild;
