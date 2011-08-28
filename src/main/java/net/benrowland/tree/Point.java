@@ -3,7 +3,7 @@ package net.benrowland.tree;
 /**
  * A Point in 2-dimensional space.
  */
-public abstract class Point<T> {
+public abstract class Point<T extends Number> {
 
     protected T x;
     protected T y;

@@ -22,6 +22,7 @@ public class TestKDTreeDouble {
     public void testBuildTree() {
         List<PointDouble> points = getPoints();
         KDTreeDouble tree = KDTreeDouble.kdtree(points);
+        assertEquals(points.size(), tree.getPoints().size());
         System.out.println(tree);
 
         Node root = tree.getRootNode();
@@ -29,14 +30,14 @@ public class TestKDTreeDouble {
 
         Node lChild = root.getLeftChild();
         Node rChild = root.getRightChild();
-        assertEquals(new PointDouble(4d, 2d), lChild.getElem());
+        assertEquals(new PointDouble(1d, 2d), lChild.getElem());
         assertEquals(new PointDouble(7d, 5d), rChild.getElem());
         assertEquals(root, lChild.getParent());
         assertEquals(root, rChild.getParent());
 
         Node lChildLChild = lChild.getLeftChild();
         Node lChildRChild = lChild.getRightChild();
-        assertEquals(new PointDouble(1d, 1d), lChildLChild.getElem());
+        assertEquals(new PointDouble(4d, 2d), lChildLChild.getElem());
         assertEquals(new PointDouble(3d, 4d), lChildRChild.getElem());
         assertEquals(lChild, lChildLChild.getParent());
         assertEquals(lChild, lChildRChild.getParent());

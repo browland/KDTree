@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * A Node Of Point (of T) in a KD Tree.
  */
-public abstract class KDTreeNode<T> extends Node<T> {
+public abstract class KDTreeNode<T extends Number> extends Node<T> {
 
     public KDTreeNode() {
         super();
@@ -75,10 +75,10 @@ public abstract class KDTreeNode<T> extends Node<T> {
         // Non-leaf node
         else {
             if(compare(point) == -1) {
-                return ((KDTreeNode<T>)leftChild).findNearestLeaf(point);
+                return leftChild != null ? ((KDTreeNode<T>)leftChild).findNearestLeaf(point) : this;
             }
             else {
-                return ((KDTreeNode<T>)rightChild).findNearestLeaf(point);
+                return rightChild != null ? ((KDTreeNode<T>)rightChild).findNearestLeaf(point) : this;
             }
         }
     }
@@ -222,35 +222,4 @@ public abstract class KDTreeNode<T> extends Node<T> {
         }
     }
 
-    static class TreePartitionStore<T extends Point> {
-        List<T> leftSidePointsSortedInX;
-        List<T> leftSidePointsSortedInY;
-        List<T> rightSidePointsSortedInX;
-        List<T> rightSidePointsSortedInY;
-
-        static <T extends Point> TreePartitionStore create(Axis axis, int medianIndex, List<T> pointsSortedInX, List<T> pointsSortedInY) {
-            TreePartitionStore store = new TreePartitionStore();
-            if(Axis.X == axis) {
-                store.leftSidePointsSortedInX = pointsSortedInX.subList(0, medianIndex);
-                store.rightSidePointsSortedInX = pointsSortedInX.subList(medianIndex+1, pointsSortedInX.size());
-
-                store.leftSidePointsSortedInY = new ArrayList<T>(pointsSortedInY);
-                store.leftSidePointsSortedInY.retainAll(store.leftSidePointsSortedInX);
-
-                store.rightSidePointsSortedInY = new ArrayList<T>(pointsSortedInY);
-                store.rightSidePointsSortedInY.retainAll(store.rightSidePointsSortedInX);
-            }
-            else if(Axis.Y == axis) {
-                store.leftSidePointsSortedInY = pointsSortedInY.subList(0, medianIndex);
-                store.rightSidePointsSortedInY = pointsSortedInY.subList(medianIndex+1, pointsSortedInY.size());
-
-                store.leftSidePointsSortedInX = new ArrayList<T>(pointsSortedInX);
-                store.leftSidePointsSortedInX.retainAll(store.leftSidePointsSortedInY);
-
-                store.rightSidePointsSortedInX = new ArrayList<T>(pointsSortedInX);
-                store.rightSidePointsSortedInX.retainAll(store.rightSidePointsSortedInY);
-            }
-            return store;
-        }
-    }
 }

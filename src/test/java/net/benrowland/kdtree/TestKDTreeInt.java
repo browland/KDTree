@@ -28,14 +28,14 @@ public class TestKDTreeInt {
 
         Node lChild = root.getLeftChild();
         Node rChild = root.getRightChild();
-        assertEquals(new PointInt(4, 2), lChild.getElem());
+        assertEquals(new PointInt(1, 2), lChild.getElem());
         assertEquals(new PointInt(7, 5), rChild.getElem());
         assertEquals(root, lChild.getParent());
         assertEquals(root, rChild.getParent());
 
         Node lChildLChild = lChild.getLeftChild();
         Node lChildRChild = lChild.getRightChild();
-        assertEquals(new PointInt(1, 1), lChildLChild.getElem());
+        assertEquals(new PointInt(4, 2), lChildLChild.getElem());
         assertEquals(new PointInt(3, 4), lChildRChild.getElem());
         assertEquals(lChild, lChildLChild.getParent());
         assertEquals(lChild, lChildRChild.getParent());

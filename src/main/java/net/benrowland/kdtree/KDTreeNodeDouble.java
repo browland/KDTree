@@ -1,9 +1,5 @@
 package net.benrowland.kdtree;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import net.benrowland.tree.Point;
 import net.benrowland.tree.PointDouble;
 
@@ -46,38 +42,24 @@ public class KDTreeNodeDouble extends KDTreeNode<Double> {
      */
     public static KDTreeNodeDouble buildNode(KDTreeNodeDouble parent, List<PointDouble> points, int depth) {
 
-        // Make 2 copies of points - one sorted in X co-ordinates, the other sorted by Y co-ordinates
-        // A bit memory-hungry but prevents having to re-sort points alternately in X and Y, every time we
-        // go one level deeper in tree construction.
-        List<PointDouble> pointsSortedInX = new ArrayList<PointDouble>(points);
-        Collections.sort(pointsSortedInX, comparatorMap.get(Axis.X));
-
-        List<PointDouble> pointsSortedInY = new ArrayList<PointDouble>(points);
-        Collections.sort(pointsSortedInY, comparatorMap.get(Axis.Y));
-
-        return buildNode(parent, pointsSortedInX, pointsSortedInY, depth);
-    }
-
-    public static KDTreeNodeDouble buildNode(KDTreeNodeDouble parent, List<PointDouble> pointsSortedInX, List<PointDouble> pointsSortedInY, int depth) {
-        // Base case (no need to check pointsSortedInY as it contains same elements)
-        if(pointsSortedInX.isEmpty()) return null;
+        if(points.isEmpty()) return null;
 
         // Create this node
         final KDTreeNodeDouble node = new KDTreeNodeDouble(parent);
         node.axis = (depth % 2 == 1) ? KDTreeNode.Axis.Y : KDTreeNode.Axis.X;
 
+        // Sort points by split axis
+        Collections.sort(points, comparatorMap.get(node.axis));
+
         // Find median in current axis, and add it to the Node.
         // todo probably needs fixing to take the median *value* rather than median *index*.
-        int medianIndex = pointsSortedInX.size() / 2;
-        final PointDouble medianPoint = node.axis == Axis.X ? pointsSortedInX.get(medianIndex) : pointsSortedInY.get(medianIndex);
+        int medianIndex = points.size() / 2;
+        final PointDouble medianPoint = points.get(medianIndex);
         node.elem = medianPoint;
 
-        TreePartitionStore<PointDouble> store =
-                TreePartitionStore.<PointDouble>create(node.axis, medianIndex, pointsSortedInX, pointsSortedInY);
-
         // Build left and right children
-        node.leftChild = buildNode(node, store.leftSidePointsSortedInX, store.leftSidePointsSortedInY, depth+1);
-        node.rightChild = buildNode(node, store.rightSidePointsSortedInX, store.rightSidePointsSortedInY, depth+1);
+        node.leftChild = buildNode(node, points.subList(0, medianIndex), depth+1);
+        node.rightChild = buildNode(node, points.subList(medianIndex+1, points.size()), depth+1);
 
         return node;
     }

@@ -5,6 +5,7 @@ import net.benrowland.tree.Point;
 import net.benrowland.tree.PointDouble;
 import net.benrowland.tree.Tree;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +28,17 @@ import java.util.List;
  * ... and so on.
  *
  */
-public class KDTreeDouble {
+public class KDTreeDouble implements Cloneable {
 
     // Prefer composition over inheritance ...
     private Tree<Double> tree;
+
+    /**
+     *
+     * All points in this kd-tree.  Makes cloning easier.
+     */
+    private List<PointDouble> points;
+
 
     // *** Constructors
 
@@ -42,6 +50,7 @@ public class KDTreeDouble {
 
     public static KDTreeDouble kdtree(List<PointDouble> points) {
         KDTreeDouble tree = new KDTreeDouble();
+        tree.points = points;
         tree.insert(KDTreeNodeDouble.buildRoot(points));
 
         return tree;
@@ -67,7 +76,15 @@ public class KDTreeDouble {
         return tree.getRootNode();
     }
 
+    public List<PointDouble> getPoints() {
+        return points;
+    }
+
     public String toString() {
         return tree.getRootNode().toString();
+    }
+
+    public Object clone() {
+        return kdtree(new ArrayList<PointDouble>(points));
     }
 }
