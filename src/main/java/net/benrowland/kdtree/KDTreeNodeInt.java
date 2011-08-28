@@ -31,25 +31,49 @@ public class KDTreeNodeInt extends KDTreeNode<Integer> {
         return buildNode(null, points, 0);
     }
 
+    /**
+     * Builds the current Node (and all below it).  The split axis alternates between X and Y.  The current
+     * node is defined as the median point (in remaining points) in the current axis.
+     *
+     * @param parent
+     * @param points
+     * @param depth
+     * @return
+     */
     public static KDTreeNodeInt buildNode(KDTreeNodeInt parent, List<PointInt> points, int depth) {
-        // Base case
-        if(points.isEmpty()) return null;
+
+        // Make 2 copies of points - one sorted in X co-ordinates, the other sorted by Y co-ordinates
+        // A bit memory-hungry but prevents having to re-sort points alternately in X and Y, every time we
+        // go one level deeper in tree construction.
+        List<PointInt> pointsSortedInX = new ArrayList<PointInt>(points);
+        Collections.sort(pointsSortedInX, comparatorMap.get(Axis.X));
+
+        List<PointInt> pointsSortedInY = new ArrayList<PointInt>(points);
+        Collections.sort(pointsSortedInY, comparatorMap.get(Axis.Y));
+
+        return buildNode(parent, pointsSortedInX, pointsSortedInY, depth);
+    }
+
+    public static KDTreeNodeInt buildNode(KDTreeNodeInt parent, List<PointInt> pointsSortedInX, List<PointInt> pointsSortedInY, int depth) {
+        // Base case (no need to check pointsSortedInY as it contains same elements)
+        if(pointsSortedInX.isEmpty()) return null;
 
         // Create this node
-        KDTreeNodeInt node = new KDTreeNodeInt(parent);
+        final KDTreeNodeInt node = new KDTreeNodeInt(parent);
         node.axis = (depth % 2 == 1) ? KDTreeNode.Axis.Y : KDTreeNode.Axis.X;
 
-        // Sort points in axis and find median
-        Collections.sort(points, comparatorMap.get(node.axis));
-        int medianIndex = points.size() / 2;
-        PointInt medianInAxis = points.get(medianIndex);
+        // Find median in current axis, and add it to the Node.
+        // todo probably needs fixing to take the median *value* rather than median *index*.
+        int medianIndex = pointsSortedInX.size() / 2;
+        final PointInt medianPoint = node.axis == Axis.X ? pointsSortedInX.get(medianIndex) : pointsSortedInY.get(medianIndex);
+        node.elem = medianPoint;
 
-        // Add median to this node
-        node.elem = medianInAxis;
+        TreePartitionStore<PointInt> store =
+                TreePartitionStore.<PointInt>create(node.axis, medianIndex, pointsSortedInX, pointsSortedInY);
 
         // Build left and right children
-        node.leftChild = buildNode(node, points.subList(0, medianIndex), depth+1);
-        node.rightChild = buildNode(node, points.subList(medianIndex+1, points.size()), depth+1);
+        node.leftChild = buildNode(node, store.leftSidePointsSortedInX, store.leftSidePointsSortedInY, depth+1);
+        node.rightChild = buildNode(node, store.rightSidePointsSortedInX, store.rightSidePointsSortedInY, depth+1);
 
         return node;
     }

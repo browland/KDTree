@@ -4,9 +4,7 @@ import com.sun.org.apache.xalan.internal.xsltc.dom.CurrentNodeListFilter;
 import net.benrowland.tree.Node;
 import net.benrowland.tree.Point;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A Node Of Point (of T) in a KD Tree.
@@ -221,6 +219,38 @@ public abstract class KDTreeNode<T> extends Node<T> {
             else {
                 return +1;
             }
+        }
+    }
+
+    static class TreePartitionStore<T extends Point> {
+        List<T> leftSidePointsSortedInX;
+        List<T> leftSidePointsSortedInY;
+        List<T> rightSidePointsSortedInX;
+        List<T> rightSidePointsSortedInY;
+
+        static <T extends Point> TreePartitionStore create(Axis axis, int medianIndex, List<T> pointsSortedInX, List<T> pointsSortedInY) {
+            TreePartitionStore store = new TreePartitionStore();
+            if(Axis.X == axis) {
+                store.leftSidePointsSortedInX = pointsSortedInX.subList(0, medianIndex);
+                store.rightSidePointsSortedInX = pointsSortedInX.subList(medianIndex+1, pointsSortedInX.size());
+
+                store.leftSidePointsSortedInY = new ArrayList<T>(pointsSortedInY);
+                store.leftSidePointsSortedInY.retainAll(store.leftSidePointsSortedInX);
+
+                store.rightSidePointsSortedInY = new ArrayList<T>(pointsSortedInY);
+                store.rightSidePointsSortedInY.retainAll(store.rightSidePointsSortedInX);
+            }
+            else if(Axis.Y == axis) {
+                store.leftSidePointsSortedInY = pointsSortedInY.subList(0, medianIndex);
+                store.rightSidePointsSortedInY = pointsSortedInY.subList(medianIndex+1, pointsSortedInY.size());
+
+                store.leftSidePointsSortedInX = new ArrayList<T>(pointsSortedInX);
+                store.leftSidePointsSortedInX.retainAll(store.leftSidePointsSortedInY);
+
+                store.rightSidePointsSortedInX = new ArrayList<T>(pointsSortedInX);
+                store.rightSidePointsSortedInX.retainAll(store.rightSidePointsSortedInY);
+            }
+            return store;
         }
     }
 }
